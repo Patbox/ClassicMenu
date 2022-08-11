@@ -1,0 +1,99 @@
+plugins {
+	id 'fabric-loom' version '0.13-SNAPSHOT'
+	id 'maven-publish'
+}
+
+//sourceCompatibility = JavaVersion.VERSION_1_8
+//targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+loom {
+	clientOnlyMinecraftJar()
+	noIntermediateMappings()
+
+	runs {
+		client {
+			// Needed for https://github.com/FabricMC/fabric-loader/issues/712
+			property 'fabric.gameVersion', '0.30'
+		}
+	}
+}
+
+repositories {
+	// Add repositories to retrieve artifacts from in here.
+	// You should only use this when depending on other mods because
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
+}
+
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.layered {
+		it.mappings("https://github.com/AntiquityMC/PotentialLamp/releases/download/${project.pl_mappings}/obfToNamed.jar")
+	}
+	minecraftLibraries "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209"
+	minecraftLibraries "org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209"
+	minecraftLibraries "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209"
+
+	afterEvaluate {
+		minecraftNatives "org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209:natives-linux"
+	}
+
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	// Minecraft 0.30 uses Java 5, but we need Java 8 for Fabric.
+	//if (JavaVersion.current().java9Compatible) {
+		//it.options.release = 8
+	//}
+}
+
+java {
+	toolchain {
+		vendor = JvmVendorSpec.ADOPTIUM
+		languageVersion = JavaLanguageVersion.of(8)
+	}
+	withSourcesJar()
+
+}
+
+tasks.withType(net.fabricmc.loom.task.AbstractRunTask).configureEach {
+	javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
+}

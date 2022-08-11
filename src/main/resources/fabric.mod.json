@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "classicmenu",
+  "version": "${version}",
+
+  "name": "ClassicMenu",
+  "description": "Adds main menu, mod list and server connection screen to Minecraft Classic",
+  "authors": [
+    "Patbox"
+  ],
+  "contact": {
+    "homepage": "https://pb4.eu",
+    "sources": "https://github.com/Patbox/ClassicMenu"
+  },
+
+  "license": "LGPLv3",
+  "icon": "assets/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+
+    ]
+  },
+  "mixins": [
+    "classicmenu.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "java": ">=8"
+  }
+}

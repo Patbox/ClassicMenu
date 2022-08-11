@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "eu.pb4.classicmenu.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ButtonAccessor",
+    "ErrorScreenMixin",
+    "MinecraftMixin",
+    "PauseScreenMixin",
+    "ScreenMixin",
+    "backgrounds.CScreenMixin",
+    "backgrounds.LoadLevelScreenMixin",
+    "backgrounds.NewLevelScreenMixin",
+    "backgrounds.OptionsScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
